@@ -5,7 +5,6 @@ import androidx.room.Entity
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Update
-import com.example.garageapp.utils.DateTimeHelper
 import com.example.garageapp.utils.DbConstants
 import java.io.Serializable
 

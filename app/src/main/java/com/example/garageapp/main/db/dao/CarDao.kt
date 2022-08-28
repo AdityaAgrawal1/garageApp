@@ -11,7 +11,7 @@ interface CarDao {
     suspend fun upsertCar(car: Car) : Long
 
     @Query("SELECT * FROM cars WHERE owner = :userId")
-    fun getAllCars(userId:Long) : LiveData<List<Car>>
+    suspend fun getAllCars(userId:Long) : List<Car>
 
     @Query("DELETE FROM cars WHERE id = :carId")
     suspend fun deleteCarById(carId: String)

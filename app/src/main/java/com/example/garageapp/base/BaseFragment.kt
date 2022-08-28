@@ -65,14 +65,6 @@ abstract class BaseFragment<VBinding : ViewBinding, VModel : BaseViewModel> : Fr
 
     open fun observeData() {}
 
-    protected fun getUserId() : Long{
-        var userId = 0L
-        lifecycleScope.launch{
-            userId = userLoginPreferences.userId.first()?:0L
-        }
-        return userId
-    }
-
     protected fun shortToast(message : String){
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }

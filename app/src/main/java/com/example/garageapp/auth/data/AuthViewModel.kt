@@ -87,7 +87,7 @@ class AuthViewModel @Inject constructor(private val authRepository: AuthReposito
     suspend fun signupDataChanged(userName: String, password: String)  = withContext(Dispatchers.IO){
         if (!isUserNameValid(userName)) {
             _signupForm.postValue(SignupFormState(userNameError = R.string.user_name_not_valid))
-        }else if (checkIfUserExists(userName)) {
+        }else if (!checkIfUserExists(userName).isNullOrEmpty()) {
             _signupForm.postValue(SignupFormState(userNameError = R.string.user_already_exists))
         }else if (!isPasswordValid(password)) {
             _signupForm.postValue(SignupFormState(passwordError = R.string.password_length))
@@ -104,7 +104,7 @@ class AuthViewModel @Inject constructor(private val authRepository: AuthReposito
     suspend fun loginDataChanged(userName: String, password: String) = withContext(Dispatchers.IO) {
         if (!isUserNameValid(userName)) {
             _loginForm.postValue(LoginFormState(userNameError = R.string.user_name_not_valid))
-        } else if (!checkIfUserExists(userName)) {
+        } else if (checkIfUserExists(userName).isNullOrEmpty()) {
             _loginForm.postValue(LoginFormState(userNameError = R.string.user_does_not_exist))
         } else if (!verifyPassword(userName,password)) {
             _loginForm.postValue(LoginFormState(passwordError = R.string.password_does_not_match))
@@ -137,11 +137,13 @@ class AuthViewModel @Inject constructor(private val authRepository: AuthReposito
         return password.length >= 8
     }
 
-    private fun checkIfUserExists(username: String): Boolean {
-        return authRepository.checkIfUserExists(username).value?.userName != null
-    }
+    private suspend fun checkIfUserExists(username: String) =
+        withContext(viewModelScope.coroutineContext) {
+            authRepository.checkIfUserExists(username).value?.userName
+        }
 
-    private fun verifyPassword(username: String, password: String): Boolean {
+
+    private suspend fun verifyPassword(username: String, password: String): Boolean {
         return authRepository.loginUser(username,password).value != null
     }
 }

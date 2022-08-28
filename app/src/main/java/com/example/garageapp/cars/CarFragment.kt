@@ -104,7 +104,6 @@ class CarFragment : BaseFragment<FragmentCarBinding, CarViewModel>(),CarRecycler
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun setUpViews() {
-
         carViewModel.getCarMakes()
 
         lifecycleScope.launch {
@@ -221,12 +220,12 @@ class CarFragment : BaseFragment<FragmentCarBinding, CarViewModel>(),CarRecycler
                 when(it){
                     is DbResource.Success ->{
                         carsList.clear()
-                        var carList = it.value.value?.map { car->
+                        var carList = it.value?.map { car->
                             CarDetails(car.id,car.carImage,car.make,car.model)
                         }
-                        carsList.addAll(carList?.toMutableList()?: mutableListOf())
+                        carsList.addAll(carList.toMutableList())
                         carRecyclerViewAdapter.updateCarsList(carsList)
-                        Log.d("cars:::", App.gson.toJson(it.value.value))
+                        Log.d("cars:::", App.gson.toJson(it.value))
                     }
                     is DbResource.Failure -> {
                         printDebug("it.message = ${it.errorMsg}")
@@ -357,9 +356,11 @@ class CarFragment : BaseFragment<FragmentCarBinding, CarViewModel>(),CarRecycler
 
     override fun onClickDeleteCar(position: Int) {
         val carId = carsList[position].carId
-        carsList.removeAt(position)
-        viewModel?.removeCar(carId)
-        viewModel?.getAddedCars(getUserId())
+        lifecycleScope.launch {
+            carsList.removeAt(position)
+            viewModel?.removeCar(carId)
+            viewModel?.getAddedCars(UserLoginPreferences(requireContext()).userId.first()?:0)
+        }
     }
 
     companion object{

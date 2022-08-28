@@ -12,7 +12,6 @@ import com.example.garageapp.networks.ApiService
 import com.example.garageapp.networks.Resource
 import com.example.garageapp.utils.DateTimeHelper.Companion.getCurrentDateAndTime
 import com.example.garageapp.utils.UserLoginPreferences
-import kotlinx.coroutines.flow.first
 import java.util.*
 import javax.inject.Inject
 
@@ -39,7 +38,7 @@ class CarRepository @Inject constructor(
        return db.getCarDao().upsertCar(car)
     }
 
-    fun getAddedCars(userId:Long): LiveData<List<Car>> {
+    suspend fun getAddedCars(userId:Long): List<Car> {
         return db.getCarDao().getAllCars(userId)
     }
 

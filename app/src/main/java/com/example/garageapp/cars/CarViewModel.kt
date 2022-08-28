@@ -30,8 +30,8 @@ class CarViewModel @Inject constructor(private val carRepository: CarRepository)
     private val _carInsertDataStatus = MutableLiveData<DbResource<Long>>()
     val carInsertDataStatus: MutableLiveData<DbResource<Long>> = _carInsertDataStatus
 
-    private val _carsData: MutableLiveData<DbResource<LiveData<List<Car>>>> = MutableLiveData()
-    val carsData: LiveData<DbResource<LiveData<List<Car>>>>
+    private val _carsData: MutableLiveData<DbResource<List<Car>>> = MutableLiveData()
+    val carsData: LiveData<DbResource<List<Car>>>
         get() = _carsData
 
     fun getCarMakes() = viewModelScope.launch {
@@ -60,7 +60,7 @@ class CarViewModel @Inject constructor(private val carRepository: CarRepository)
         }
     }
 
-    fun getAddedCars(userId: Long) = viewModelScope.launch {
+     fun getAddedCars(userId: Long) = viewModelScope.launch {
         _carsData.value = DbResource.Loading
         try {
             val res =  carRepository.getAddedCars(userId)

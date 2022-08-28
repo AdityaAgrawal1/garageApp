@@ -24,15 +24,15 @@ class AuthRepository @Inject constructor(
         return db.getUserDao().upsertUser(user)
     }
 
-    fun loginUser(userName:String, password:String): LiveData<User> {
+    suspend fun loginUser(userName:String, password:String): LiveData<User> {
         return db.getUserDao().loginUser(userName,password)
     }
 
-    fun getUserData(userId:Long):LiveData<User> {
+    suspend fun getUserData(userId:Long):LiveData<User> {
         return db.getUserDao().getUserDataDetails(userId)
     }
 
-    fun checkIfUserExists(username:String):LiveData<User> {
+    suspend fun checkIfUserExists(username:String):LiveData<User> {
         return db.getUserDao().getUserByName(username)
     }
 
