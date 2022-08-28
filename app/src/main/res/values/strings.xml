@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">GarageApp</string>
+    <string name="checkInternetConnection">Please check your internet connection</string>
+    <string name="retry">Retry</string>
+    <string name="somethingWentWrong">Something Went Wrong</string>
+    <string name="user_name_must_not_be_empty">User name must not be empty.</string>
+    <string name="user_name_length">User name must not be between 4 to 10 characters long.</string>
+    <string name="user_name_not_valid">This User name is not valid. Please check again.</string>
+    <string name="user_already_exists">This User already exists. Please sign in.</string>
+    <string name="user_does_not_exist">This User does not exist. Please sign up.</string>
+    <string name="password_length">Password must not be less than 8 characters.</string>
+    <string name="password_does_not_match">Password does not match.</string>
+    <string name="delete">Delete</string>
+    <string name="add_image">Add Image</string>
+
+    <string name="update_car_image_dialog_title">Change Car Image</string>
+    <string name="car_image_remove_msg">Car Image Removed</string>
+    <string name="car_image_update_msg">Car Image Updated Successfully.</string>
+    <string name="car_image__update_error_msg">Car Image Update Failed.</string>
+
+
+    <string-array name="car_image_options">
+        <item>Take Picture</item>
+        <item>Upload from Gallery</item>
+        <item>Remove Photo</item>
+        <item>Cancel</item>
+    </string-array>
+</resources>
