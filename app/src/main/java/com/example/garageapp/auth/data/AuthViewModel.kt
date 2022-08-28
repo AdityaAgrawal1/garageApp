@@ -138,7 +138,7 @@ class AuthViewModel @Inject constructor(private val authRepository: AuthReposito
     }
 
     private fun checkIfUserExists(username: String): Boolean {
-        return authRepository.checkIfUserExists(username).value != null
+        return authRepository.checkIfUserExists(username).value?.userName != null
     }
 
     private fun verifyPassword(username: String, password: String): Boolean {

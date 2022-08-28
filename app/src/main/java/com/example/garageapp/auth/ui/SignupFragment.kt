@@ -115,6 +115,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding, AuthViewModel>(){
                         runBlocking {
                             UserLoginPreferences(requireContext()).saveUserId(it.value)
                         }
+                        requireView().snackBar(it.value.toString())
                     }
                     is DbResource.Failure -> {
                         printDebug("it.message = ${it.errorMsg}")

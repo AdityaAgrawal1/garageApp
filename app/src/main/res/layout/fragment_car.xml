@@ -47,6 +47,7 @@
                     style="@style/Widget.MaterialComponents.AutoCompleteTextView.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textColorHint="?attr/colorPrimary"
                     android:layout_gravity="center_vertical"
                     android:dropDownHeight="200dp"
                     android:imeOptions="actionNext"

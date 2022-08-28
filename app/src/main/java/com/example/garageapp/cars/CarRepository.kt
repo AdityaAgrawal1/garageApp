@@ -2,6 +2,7 @@ package com.example.garageapp.cars
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.lifecycle.LiveData
 import com.example.garageapp.base.BaseRepository
 import com.example.garageapp.cars.responses.CarMakeResponse
 import com.example.garageapp.cars.responses.CarModelResponse
@@ -31,14 +32,16 @@ class CarRepository @Inject constructor(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun upsertCar(selectedCarMake:String, selectedCarModel: String) {
+    suspend fun upsertCar(selectedCarMake:String, selectedCarModel: String, userId: Long) : Long {
         val currentTime = getCurrentDateAndTime()
         val car = Car(UUID.randomUUID().toString(), selectedCarMake,selectedCarModel,
-            "","",userLoginPreferences.userId.first(),currentTime,currentTime)
-        db.getCarDao().upsertCar(car)
+            "","",userId,currentTime,currentTime)
+       return db.getCarDao().upsertCar(car)
     }
 
-    fun getAddedCars(userId:Long) =  db.getCarDao().getAllCars(userId)
+    fun getAddedCars(userId:Long): LiveData<List<Car>> {
+        return db.getCarDao().getAllCars(userId)
+    }
 
     suspend fun removeCar(carId:String){
         db.getCarDao().deleteCarById(carId)

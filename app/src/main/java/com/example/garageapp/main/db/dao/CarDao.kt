@@ -10,7 +10,7 @@ interface CarDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertCar(car: Car) : Long
 
-    @Query("SELECT * FROM cars WHERE owner LIKE :userId")
+    @Query("SELECT * FROM cars WHERE owner = :userId")
     fun getAllCars(userId:Long) : LiveData<List<Car>>
 
     @Query("DELETE FROM cars WHERE id = :carId")

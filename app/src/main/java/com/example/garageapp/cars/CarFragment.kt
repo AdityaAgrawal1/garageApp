@@ -30,6 +30,7 @@ import com.example.garageapp.main.db.DbResource
 import com.example.garageapp.networks.Resource
 import com.example.garageapp.utils.*
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 
@@ -56,7 +57,7 @@ class CarFragment : BaseFragment<FragmentCarBinding, CarViewModel>(),CarRecycler
         override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
             if(position != 0){
                 lifecycleScope.launch {
-                    val makeId = (viewModel?.carMakeResponse?.value as Resource.Success).value
+                    val makeId = (carViewModel.carMakeResponse.value as Resource.Success).value
                         .results
                         ?.find{ it?.makeName == binding?.carMake?.adapter?.getItem(position).toString() }
                         ?.makeID
@@ -77,17 +78,14 @@ class CarFragment : BaseFragment<FragmentCarBinding, CarViewModel>(),CarRecycler
         AdapterView.OnItemClickListener { parent, view, position, id ->
             if(position != 0){
                 lifecycleScope.launch {
-                    val res = viewModel?.carMakeResponse?.value
-                    if(res!=null){
-                        val makeId = (res as Resource.Success).value
-                            .results
-                            ?.find{ it?.makeName == binding?.carMake?.adapter?.getItem(position).toString() }
-                            ?.makeID
-                        carModels.clear()
-                        binding?.carModel?.clearListSelection()
-                        selectedCarMake = binding?.carMake?.adapter?.getItem(position).toString()
-                        viewModel?.getCarModels(makeId!!)
-                    }
+                    val makeId = (carViewModel.carMakeResponse.value as Resource.Success).value
+                        .results
+                        ?.find{ it?.makeName == binding?.carMake?.adapter?.getItem(position).toString() }
+                        ?.makeID
+                    carModels.clear()
+                    binding?.carModel?.clearListSelection()
+                    selectedCarMake = binding?.carMake?.adapter?.getItem(position).toString()
+                    carViewModel.getCarModels(makeId!!)
                 }
             }
         }
@@ -109,8 +107,9 @@ class CarFragment : BaseFragment<FragmentCarBinding, CarViewModel>(),CarRecycler
 
         carViewModel.getCarMakes()
 
-        viewModel?.getAddedCars(getUserId())
-
+        lifecycleScope.launch {
+            carViewModel.getAddedCars(UserLoginPreferences(requireContext()).userId.first()?:0)
+        }
 
         carRecyclerViewAdapter = CarRecyclerViewAdapter(requireContext(), carsList,this)
 
@@ -120,7 +119,7 @@ class CarFragment : BaseFragment<FragmentCarBinding, CarViewModel>(),CarRecycler
         }
         binding?.header?.root?.findViewById<AppCompatButton>(R.id.btn_logout)?.setOnClickListener {
             lifecycleScope.launch {
-                viewModel?.logout()
+                carViewModel.logout()
                 findNavController().navigate(R.id.loginFragment)
                 shortToast("Logout Successfully")
             }
@@ -202,6 +201,21 @@ class CarFragment : BaseFragment<FragmentCarBinding, CarViewModel>(),CarRecycler
                 }
             }
 
+            carInsertDataStatus.observe(viewLifecycleOwner){
+                binding?.loading?.visible(it is DbResource.Loading)
+                when(it){
+                    is DbResource.Success ->{
+                        lifecycleScope.launch {
+                            getAddedCars(UserLoginPreferences(requireContext()).userId.first()?:0)
+                        }
+                    }
+                    is DbResource.Failure -> {
+                        printDebug("it.message = ${it.errorMsg}")
+                        requireView().snackBar(it.errorMsg.toString())
+                    }
+                    else -> {}
+                }
+            }
             carsData.observe(viewLifecycleOwner){
                 binding?.loading?.visible(it is DbResource.Loading)
                 when(it){
@@ -210,9 +224,9 @@ class CarFragment : BaseFragment<FragmentCarBinding, CarViewModel>(),CarRecycler
                         var carList = it.value.value?.map { car->
                             CarDetails(car.id,car.carImage,car.make,car.model)
                         }
-                        carsList.addAll(carList!!.toMutableList())
+                        carsList.addAll(carList?.toMutableList()?: mutableListOf())
                         carRecyclerViewAdapter.updateCarsList(carsList)
-                        Log.d("cars:::", App.gson.toJson(it.value))
+                        Log.d("cars:::", App.gson.toJson(it.value.value))
                     }
                     is DbResource.Failure -> {
                         printDebug("it.message = ${it.errorMsg}")
@@ -227,8 +241,10 @@ class CarFragment : BaseFragment<FragmentCarBinding, CarViewModel>(),CarRecycler
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun addCar(){
-        viewModel?.addCar(selectedCarMake,selectedCarModel)
-        viewModel?.getAddedCars(getUserId())
+        lifecycleScope.launch {
+            val userId = UserLoginPreferences(requireContext()).userId.first()?:0
+            carViewModel.addCar(selectedCarMake, userId, selectedCarModel)
+        }
     }
 
 

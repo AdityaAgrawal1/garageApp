@@ -9,6 +9,7 @@ import com.example.garageapp.base.BaseViewModel
 import com.example.garageapp.cars.responses.*
 import com.example.garageapp.main.db.Car
 import com.example.garageapp.main.db.DbResource
+import com.example.garageapp.main.db.User
 import com.example.garageapp.networks.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -25,6 +26,9 @@ class CarViewModel @Inject constructor(private val carRepository: CarRepository)
     private val _carMakeResponse: MutableLiveData<Resource<CarMakeResponse>> = MutableLiveData()
     val carMakeResponse: LiveData<Resource<CarMakeResponse>>
         get() = _carMakeResponse
+
+    private val _carInsertDataStatus = MutableLiveData<DbResource<Long>>()
+    val carInsertDataStatus: MutableLiveData<DbResource<Long>> = _carInsertDataStatus
 
     private val _carsData: MutableLiveData<DbResource<LiveData<List<Car>>>> = MutableLiveData()
     val carsData: LiveData<DbResource<LiveData<List<Car>>>>
@@ -46,8 +50,14 @@ class CarViewModel @Inject constructor(private val carRepository: CarRepository)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun addCar(selectedCarMake:String, selectedCarModel: String) = viewModelScope.launch{
-        carRepository.upsertCar(selectedCarMake, selectedCarModel)
+    fun addCar(selectedCarMake:String, userId: Long, selectedCarModel: String) = viewModelScope.launch{
+        _carInsertDataStatus.value = DbResource.Loading
+        try {
+            val res =  carRepository.upsertCar(selectedCarMake, selectedCarModel,userId)
+            _carInsertDataStatus.postValue(DbResource.Success(res))
+        } catch (exception: Exception) {
+            _carInsertDataStatus.postValue(DbResource.Failure(4, exception.message!!))
+        }
     }
 
     fun getAddedCars(userId: Long) = viewModelScope.launch {
