@@ -1,10 +1,7 @@
-package com.example.garageapp.main.db
+package com.example.garageapp.main.db.entities
 
 import androidx.annotation.NonNull
-import androidx.room.Entity
-import androidx.room.OnConflictStrategy
-import androidx.room.PrimaryKey
-import androidx.room.Update
+import androidx.room.*
 import com.example.garageapp.utils.DbConstants
 import java.io.Serializable
 
@@ -17,11 +14,12 @@ data class Car constructor(
     @NonNull
     val id: String,
 
+    @Update(onConflict = OnConflictStrategy.IGNORE)
     val make: String? = null,
 
     val model: String? = null,
 
-    val carImage: String? = null,
+    var carImage: String? = null,
 
     val description: String? = null,
 

@@ -30,6 +30,6 @@
     </fragment>
     <fragment
         android:id="@+id/carFragment"
-        android:name="com.example.garageapp.cars.CarFragment"
+        android:name="com.example.garageapp.cars.ui.CarFragment"
         android:label="CarFragment" />
 </navigation>

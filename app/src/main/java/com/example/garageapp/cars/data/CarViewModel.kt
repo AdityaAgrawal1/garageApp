@@ -1,4 +1,4 @@
-package com.example.garageapp.cars
+package com.example.garageapp.cars.data
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -6,10 +6,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.garageapp.base.BaseViewModel
-import com.example.garageapp.cars.responses.*
-import com.example.garageapp.main.db.Car
-import com.example.garageapp.main.db.DbResource
-import com.example.garageapp.main.db.User
+import com.example.garageapp.cars.responses.CarMakeResponse
+import com.example.garageapp.cars.responses.CarModelResponse
+import com.example.garageapp.main.db.entities.Car
+import com.example.garageapp.main.db.resources.DbResource
 import com.example.garageapp.networks.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -70,8 +70,14 @@ class CarViewModel @Inject constructor(private val carRepository: CarRepository)
         }
     }
 
-    fun removeCar(carId: String) = viewModelScope.launch{
-        carRepository.removeCar(carId)
+    suspend fun removeCar(carId: String) {
+        _carInsertDataStatus.value = DbResource.Loading
+        try {
+            val res = carRepository.removeCar(carId)
+            _carInsertDataStatus.postValue(DbResource.Success(res))
+        } catch (exception: Exception) {
+            _carInsertDataStatus.postValue(DbResource.Failure(3, exception.message!!))
+        }
     }
 
     suspend fun updateCarImage(carId: String, carImage:String) = carRepository.updateCarImage(carId,carImage)

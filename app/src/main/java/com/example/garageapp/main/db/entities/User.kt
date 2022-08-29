@@ -1,4 +1,4 @@
-package com.example.garageapp.main.db
+package com.example.garageapp.main.db.entities
 
 import androidx.room.Entity
 import androidx.room.OnConflictStrategy

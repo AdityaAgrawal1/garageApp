@@ -9,12 +9,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.garageapp.R
-import com.example.garageapp.cars.ui.CarDetails
 import com.example.garageapp.databinding.ItemCarBinding
+import com.example.garageapp.main.db.entities.Car
 
 class CarRecyclerViewAdapter(
     private val context: Context,
-    private var carsList: List<CarDetails>,
+    private var carsList: List<Car>,
     private val onClickListener : ClickListener
     ) : RecyclerView.Adapter<CarRecyclerViewAdapter.CarItemViewHolder>() {
 
@@ -32,13 +32,15 @@ class CarRecyclerViewAdapter(
     inner class CarItemViewHolder(private val binding: ItemCarBinding) :
         RecyclerView.ViewHolder(binding.root){
 
+        @SuppressLint("UseCompatLoadingForDrawables")
         fun bind(position : Int){
             binding.car = carsList[position]
 
-            binding.carMake.text = carsList[position].carMake
-            binding.carModel.text = carsList[position].carModel
+            binding.carMake.text = carsList[position].make
+            binding.carModel.text = carsList[position].model
 
             val carImageUrl = carsList[position].carImage?:""
+
             Glide.with(itemView.context)
                 .load(carImageUrl)
                 .error(
@@ -59,7 +61,7 @@ class CarRecyclerViewAdapter(
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateCarsList(carsList: List<CarDetails>){
+    fun updateCarsList(carsList: List<Car>){
         this.carsList = carsList
         notifyDataSetChanged()
     }

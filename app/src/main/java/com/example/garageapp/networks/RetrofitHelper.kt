@@ -1,5 +1,6 @@
 package com.example.garageapp.networks
 
+import com.example.garageapp.utils.Constants
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -17,7 +18,7 @@ class RetrofitHelper {
             synchronized(RetrofitHelper::class){
                 if(!this::retrofit.isInitialized)
                     retrofit = Retrofit.Builder()
-                        .baseUrl("https://vpic.nhtsa.dot.gov/api/vehicles/")
+                        .baseUrl(Constants.BASE_URL)
                         .client(provideOkHttpClient(provideLoggingInterceptor()))
                         .addConverterFactory(GsonConverterFactory.create())
                         .build()

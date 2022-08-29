@@ -1,4 +1,4 @@
-package com.example.garageapp.main
+package com.example.garageapp.main.data
 
 import com.example.garageapp.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel

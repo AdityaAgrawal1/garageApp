@@ -10,11 +10,8 @@ import com.example.garageapp.R
 import com.example.garageapp.auth.data.AuthViewModel
 import com.example.garageapp.base.BaseFragment
 import com.example.garageapp.databinding.FragmentLoginBinding
-import com.example.garageapp.main.db.DbResource
-import com.example.garageapp.utils.UserLoginPreferences
-import com.example.garageapp.utils.printDebug
-import com.example.garageapp.utils.snackBar
-import com.example.garageapp.utils.visible
+import com.example.garageapp.main.db.resources.DbResource
+import com.example.garageapp.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -79,6 +76,9 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, AuthViewModel>() {
 
             login.setOnClickListener {
                 viewModel?.apply {
+                    if(checkStateSoftKeyBoard()){
+                        hideKeyboard()
+                    }
                     login()
                 }
             }
@@ -113,17 +113,13 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, AuthViewModel>() {
                 binding?.loading?.visible(it is DbResource.Loading)
                 when (it) {
                     is DbResource.Success -> {
-                        printDebug("it.messageSuccess = ${it.value.value}")
-                        if (it.value.value != null) {
+                        printDebug("it.messageSuccess = ${it.value}")
                             runBlocking {
-                                UserLoginPreferences(requireContext()).saveUserId(it.value.value!!.id!!)
+                                UserLoginPreferences(requireContext()).saveUserId(it.value.id!!)
                             }
                             findNavController().navigate(R.id.action_loginFragment_to_carFragment,
                                 null,
                                 navOptions)
-                        } else {
-                            requireView().snackBar("User does not exist in database.")
-                        }
                     }
 
                     is DbResource.Failure -> {

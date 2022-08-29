@@ -1,8 +1,8 @@
 package com.example.garageapp.di
 
 import com.example.garageapp.auth.data.AuthRepository
-import com.example.garageapp.cars.CarRepository
-import com.example.garageapp.main.MainRepository
+import com.example.garageapp.cars.data.CarRepository
+import com.example.garageapp.main.data.MainRepository
 import com.example.garageapp.main.db.GarageDatabase
 import com.example.garageapp.networks.ApiService
 import com.example.garageapp.utils.UserLoginPreferences

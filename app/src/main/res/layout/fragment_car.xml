@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#DEF0EE"
-        tools:context=".cars.CarFragment">
+        tools:context=".cars.ui.CarFragment">
 
         <include
             android:id="@+id/header"
@@ -39,7 +39,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_margin="8dp"
-                android:textColorHint="?attr/colorPrimary"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <androidx.appcompat.widget.AppCompatAutoCompleteTextView
@@ -48,6 +47,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColorHint="?attr/colorPrimary"
+                    android:textColor="?attr/colorPrimary"
                     android:layout_gravity="center_vertical"
                     android:dropDownHeight="200dp"
                     android:imeOptions="actionNext"
@@ -69,6 +69,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:textColor="?attr/colorPrimary"
                     android:textColorHint="?attr/colorPrimary"
                     android:imeOptions="actionNext"
                     />
@@ -80,7 +81,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="8dp"
                 android:padding="8dp"
-                android:text="Add Car"
+                android:text="@string/add_car"
                 style="@style/Widget.MaterialComponents.Button"
                 app:cornerRadius="4dp"
                 android:layout_gravity="end"/>
@@ -88,22 +89,29 @@
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <androidx.recyclerview.widget.RecyclerView
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/car_spinner_container"
             android:id="@+id/rv_cars"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:visibility="visible"
+            android:layout_height="450dp"
+            android:layout_marginHorizontal="8dp"
             android:layout_marginTop="8dp"
+            android:fadeScrollbars="false"
             android:fadingEdge="vertical"
+            android:scrollbarAlwaysDrawVerticalTrack="true"
+            android:scrollbarSize="2dp"
+            android:scrollbarStyle="outsideInset"
+            android:scrollbarThumbVertical="@color/black"
+            android:scrollbars="vertical"
+            android:visibility="visible"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/car_spinner_container"
             tools:listitem="@layout/item_car" />
 
         <include
             android:id="@+id/loading"
             android:visibility="gone"
             layout="@layout/layout_loading"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

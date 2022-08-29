@@ -1,8 +1,7 @@
 package com.example.garageapp.main.db.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.example.garageapp.main.db.Car
+import com.example.garageapp.main.db.entities.Car
 
 @Dao
 interface CarDao {
@@ -14,7 +13,7 @@ interface CarDao {
     suspend fun getAllCars(userId:Long) : List<Car>
 
     @Query("DELETE FROM cars WHERE id = :carId")
-    suspend fun deleteCarById(carId: String)
+    suspend fun deleteCarById(carId: String):Int
 
     @Query("UPDATE cars SET carImage = :carImage WHERE id = :carId")
     suspend fun updateCarImage(carId: String, carImage:String)

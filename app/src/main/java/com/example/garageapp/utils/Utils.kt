@@ -1,7 +1,10 @@
 package com.example.garageapp.utils
 
+import android.app.Activity
+import android.content.Context
 import android.view.View
 import android.view.animation.TranslateAnimation
+import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import com.example.garageapp.App
 import com.example.garageapp.BuildConfig
@@ -38,6 +41,24 @@ fun printDebug(s: String) {
         println("s = $s")
     }
 }
+
+fun Fragment.hideKeyboard() {
+    view?.let { activity?.hideKeyboard(it) }
+}
+
+
+fun Context.hideKeyboard(view: View) {
+    val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+    inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+}
+
+fun Fragment.checkStateSoftKeyBoard(): Boolean {
+    val inputMethodManager =
+        context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    return inputMethodManager.isActive
+}
+
+
 
 fun View.snackBar(message: String, action: (() -> Unit)? = null) {
     val snackBar = Snackbar.make(this, message, Snackbar.LENGTH_LONG)

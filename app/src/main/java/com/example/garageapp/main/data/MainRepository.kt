@@ -1,4 +1,4 @@
-package com.example.garageapp.main
+package com.example.garageapp.main.data
 import com.example.garageapp.base.BaseRepository
 import com.example.garageapp.networks.ApiService
 import javax.inject.Inject

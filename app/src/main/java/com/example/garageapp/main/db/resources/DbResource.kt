@@ -1,4 +1,4 @@
-package com.example.garageapp.main.db
+package com.example.garageapp.main.db.resources
 
 sealed class DbResource<out T> {
     data class Success<out T>(val value: T) : DbResource<T>()

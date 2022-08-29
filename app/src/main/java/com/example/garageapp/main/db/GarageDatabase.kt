@@ -4,6 +4,8 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.example.garageapp.main.db.dao.CarDao
 import com.example.garageapp.main.db.dao.UserDao
+import com.example.garageapp.main.db.entities.Car
+import com.example.garageapp.main.db.entities.User
 
 
 @Database(

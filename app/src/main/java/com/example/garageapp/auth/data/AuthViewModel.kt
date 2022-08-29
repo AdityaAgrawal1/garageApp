@@ -8,8 +8,8 @@ import com.example.garageapp.R
 import com.example.garageapp.auth.formstates.LoginFormState
 import com.example.garageapp.auth.formstates.SignupFormState
 import com.example.garageapp.base.BaseViewModel
-import com.example.garageapp.main.db.DbResource
-import com.example.garageapp.main.db.User
+import com.example.garageapp.main.db.resources.DbResource
+import com.example.garageapp.main.db.entities.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,7 +17,6 @@ import kotlinx.coroutines.withContext
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 import javax.inject.Inject
-
 @HiltViewModel
 class AuthViewModel @Inject constructor(private val authRepository: AuthRepository)
     : BaseViewModel(authRepository) {
@@ -25,11 +24,11 @@ class AuthViewModel @Inject constructor(private val authRepository: AuthReposito
     private val _insertUsersDataStatus = MutableLiveData<DbResource<Long>>()
     val insertUsersDataStatus: LiveData<DbResource<Long>> = _insertUsersDataStatus
 
-    private val _userLoginDataStatus = MutableLiveData<DbResource<LiveData<User>>>()
-    val userLoginDataStatus: MutableLiveData<DbResource<LiveData<User>>> = _userLoginDataStatus
+    private val _userLoginDataStatus = MutableLiveData<DbResource<User>>()
+    val userLoginDataStatus: MutableLiveData<DbResource<User>> = _userLoginDataStatus
 
-    private val _userProfileDataStatus = MutableLiveData<DbResource<LiveData<User>>>()
-    val userProfileDataStatus: MutableLiveData<DbResource<LiveData<User>>> = _userProfileDataStatus
+    private val _userProfileDataStatus = MutableLiveData<DbResource<User>>()
+    val userProfileDataStatus: MutableLiveData<DbResource<User>> = _userProfileDataStatus
 
 
     /** Holds the signup form state presented on screen*/
@@ -40,10 +39,6 @@ class AuthViewModel @Inject constructor(private val authRepository: AuthReposito
     private val _loginForm = MutableLiveData(LoginFormState())
     val loginFormState: LiveData<LoginFormState> = _loginForm
 
-
-    /**
-     * Calls the auth service for performing signup
-     * */
     @RequiresApi(Build.VERSION_CODES.O)
     fun signup(userName: String, password: String) = viewModelScope.launch {
         _insertUsersDataStatus.value = DbResource.Loading
@@ -85,9 +80,14 @@ class AuthViewModel @Inject constructor(private val authRepository: AuthReposito
      * @param password credentials of the user
      * */
     suspend fun signupDataChanged(userName: String, password: String)  = withContext(Dispatchers.IO){
-        if (!isUserNameValid(userName)) {
+        if (userName.isEmpty()) {
+            _signupForm.postValue(SignupFormState(userNameError = R.string.user_name_must_not_be_empty))
+        }
+        else if (userName.length < 4 || userName.length > 10) {
+            _signupForm.postValue(SignupFormState(userNameError = R.string.user_name_length))
+        } else if (!isUserNameValid(userName)) {
             _signupForm.postValue(SignupFormState(userNameError = R.string.user_name_not_valid))
-        }else if (!checkIfUserExists(userName).isNullOrEmpty()) {
+        }else if (checkIfUserExists(userName)!=null) {
             _signupForm.postValue(SignupFormState(userNameError = R.string.user_already_exists))
         }else if (!isPasswordValid(password)) {
             _signupForm.postValue(SignupFormState(passwordError = R.string.password_length))
@@ -98,34 +98,33 @@ class AuthViewModel @Inject constructor(private val authRepository: AuthReposito
 
     /**
      * Whenever login data changes, this methods performs validations
-     * @param phone phone number of the user
+     * @param userName user name of the user
      * @param password credentials of the user
      * */
     suspend fun loginDataChanged(userName: String, password: String) = withContext(Dispatchers.IO) {
-        if (!isUserNameValid(userName)) {
+        if (userName.isEmpty()) {
+            _loginForm.postValue(LoginFormState(userNameError = R.string.user_name_must_not_be_empty))
+        }
+        else if (userName.length < 4 || userName.length > 10) {
+            _loginForm.postValue(LoginFormState(userNameError = R.string.user_name_length))
+        }else if (!isUserNameValid(userName)) {
             _loginForm.postValue(LoginFormState(userNameError = R.string.user_name_not_valid))
-        } else if (checkIfUserExists(userName).isNullOrEmpty()) {
+        } else if (checkIfUserExists(userName)==null) {
             _loginForm.postValue(LoginFormState(userNameError = R.string.user_does_not_exist))
-        } else if (!verifyPassword(userName,password)) {
+        } else if (!isPasswordValid(password)) {
+            _loginForm.postValue(LoginFormState(passwordError = R.string.password_length))
+        }else if (verifyPassword(userName,password)==null) {
             _loginForm.postValue(LoginFormState(passwordError = R.string.password_does_not_match))
-        } else {
+        }else {
             _loginForm.postValue(LoginFormState(isDataValid = true))
         }
     }
 
 
     /**
-     * Phone number validation, depends on country
+     * Username validation
      * */
     private fun isUserNameValid(username: String):Boolean{
-        if (username.isEmpty()) {
-            _loginForm.postValue(LoginFormState(userNameError = R.string.user_name_must_not_be_empty))
-        }
-
-        if (username.length < 4 || username.length > 10) {
-            _loginForm.postValue(LoginFormState(userNameError = R.string.user_name_length))
-        }
-
         val pattern = Pattern.compile("^[a-zA-Z0-9]{4,10}$")
         val matcher: Matcher = pattern.matcher(username)
         return matcher.matches()
@@ -137,13 +136,14 @@ class AuthViewModel @Inject constructor(private val authRepository: AuthReposito
         return password.length >= 8
     }
 
-    private suspend fun checkIfUserExists(username: String) =
-        withContext(viewModelScope.coroutineContext) {
-            authRepository.checkIfUserExists(username).value?.userName
-        }
+    private suspend fun checkIfUserExists(username: String): User?{
+        return authRepository.checkIfUserExists(username)
+    }
 
 
-    private suspend fun verifyPassword(username: String, password: String): Boolean {
-        return authRepository.loginUser(username,password).value != null
+    private suspend fun verifyPassword(username: String, password: String): User? {
+        return authRepository.loginUser(username,password)
     }
 }
+
+

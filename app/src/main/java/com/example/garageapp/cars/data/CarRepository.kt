@@ -1,12 +1,11 @@
-package com.example.garageapp.cars
+package com.example.garageapp.cars.data
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.lifecycle.LiveData
 import com.example.garageapp.base.BaseRepository
 import com.example.garageapp.cars.responses.CarMakeResponse
 import com.example.garageapp.cars.responses.CarModelResponse
-import com.example.garageapp.main.db.Car
+import com.example.garageapp.main.db.entities.Car
 import com.example.garageapp.main.db.GarageDatabase
 import com.example.garageapp.networks.ApiService
 import com.example.garageapp.networks.Resource
@@ -42,8 +41,8 @@ class CarRepository @Inject constructor(
         return db.getCarDao().getAllCars(userId)
     }
 
-    suspend fun removeCar(carId:String){
-        db.getCarDao().deleteCarById(carId)
+    suspend fun removeCar(carId:String):Long{
+        return  db.getCarDao().deleteCarById(carId).toLong()
     }
 
 

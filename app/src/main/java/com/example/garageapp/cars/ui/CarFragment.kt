@@ -1,4 +1,4 @@
-package com.example.garageapp.cars
+package com.example.garageapp.cars.ui
 
 import android.Manifest
 import android.app.Activity
@@ -9,8 +9,6 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import android.util.Log
-import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.annotation.RequiresApi
@@ -20,13 +18,13 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.example.garageapp.App
 import com.example.garageapp.R
 import com.example.garageapp.base.BaseFragment
 import com.example.garageapp.cars.adapter.CarRecyclerViewAdapter
-import com.example.garageapp.cars.ui.CarDetails
+import com.example.garageapp.cars.data.CarViewModel
 import com.example.garageapp.databinding.FragmentCarBinding
-import com.example.garageapp.main.db.DbResource
+import com.example.garageapp.main.db.entities.Car
+import com.example.garageapp.main.db.resources.DbResource
 import com.example.garageapp.networks.Resource
 import com.example.garageapp.utils.*
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,38 +39,15 @@ class CarFragment : BaseFragment<FragmentCarBinding, CarViewModel>(),CarRecycler
 
     private val carViewModel : CarViewModel by viewModels()
 
-    private var carsList = mutableListOf<CarDetails>()
+    private var carsList = mutableListOf<Car>()
 
     private var selectedCarMake = ""
     private var selectedCarModel = ""
 
     private var imageUri:Uri = Uri.EMPTY
-    private var carImgUrl:String = ""
 
     private var position = -1
     private var carId = ""
-
-
-    private val carMakeSelectedListener = object : AdapterView.OnItemSelectedListener{
-        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-            if(position != 0){
-                lifecycleScope.launch {
-                    val makeId = (carViewModel.carMakeResponse.value as Resource.Success).value
-                        .results
-                        ?.find{ it?.makeName == binding?.carMake?.adapter?.getItem(position).toString() }
-                        ?.makeID
-                    carModels.clear()
-                    binding?.carModel?.clearListSelection()
-                    viewModel?.getCarModels(makeId!!)
-                }
-            }
-        }
-
-        override fun onNothingSelected(parent: AdapterView<*>?) {
-
-        }
-    }
-
 
     private val carMakeClickListener =
         AdapterView.OnItemClickListener { parent, view, position, id ->
@@ -84,6 +59,7 @@ class CarFragment : BaseFragment<FragmentCarBinding, CarViewModel>(),CarRecycler
                         ?.makeID
                     carModels.clear()
                     binding?.carModel?.clearListSelection()
+                    binding?.carModel?.setText("Select Car Model", false)
                     selectedCarMake = binding?.carMake?.adapter?.getItem(position).toString()
                     carViewModel.getCarModels(makeId!!)
                 }
@@ -95,6 +71,9 @@ class CarFragment : BaseFragment<FragmentCarBinding, CarViewModel>(),CarRecycler
             if(position != 0){
                 lifecycleScope.launch {
                     selectedCarModel = binding?.carModel?.adapter?.getItem(position).toString()
+                    if(checkStateSoftKeyBoard()){
+                        hideKeyboard()
+                    }
                 }
             }
         }
@@ -125,7 +104,6 @@ class CarFragment : BaseFragment<FragmentCarBinding, CarViewModel>(),CarRecycler
         }
 
         binding?.apply {
-            carMake.onItemSelectedListener = carMakeSelectedListener
             carMake.onItemClickListener = carMakeClickListener
             carModel.onItemClickListener = carModelClickListener
             carModel.setAdapter(
@@ -141,6 +119,9 @@ class CarFragment : BaseFragment<FragmentCarBinding, CarViewModel>(),CarRecycler
 
 
         binding?.addCar?.setOnClickListener {
+            if(checkStateSoftKeyBoard()){
+                hideKeyboard()
+            }
             addCar()
         }
 
@@ -219,13 +200,13 @@ class CarFragment : BaseFragment<FragmentCarBinding, CarViewModel>(),CarRecycler
                 binding?.loading?.visible(it is DbResource.Loading)
                 when(it){
                     is DbResource.Success ->{
-                        carsList.clear()
-                        var carList = it.value?.map { car->
-                            CarDetails(car.id,car.carImage,car.make,car.model)
+                        binding?.apply {
+                            carMake.setText("Select Car Make", false)
+                            carModel.setText("Select Car Model", false)
+                            carModels.clear()
                         }
-                        carsList.addAll(carList.toMutableList())
-                        carRecyclerViewAdapter.updateCarsList(carsList)
-                        Log.d("cars:::", App.gson.toJson(it.value))
+                        carsList = it.value.toMutableList()
+                        carRecyclerViewAdapter.updateCarsList(it.value)
                     }
                     is DbResource.Failure -> {
                         printDebug("it.message = ${it.errorMsg}")
@@ -295,8 +276,7 @@ class CarFragment : BaseFragment<FragmentCarBinding, CarViewModel>(),CarRecycler
                         MediaStore.Images.Media.INTERNAL_CONTENT_URI)
                     startActivityForResult(gallery, 1)
                 }
-                2 -> shortToast(R.string.car_image_remove_msg)
-                3 -> dialog.dismiss()
+                2 -> dialog.dismiss()
             }
         }
         builder.show()
@@ -326,14 +306,14 @@ class CarFragment : BaseFragment<FragmentCarBinding, CarViewModel>(),CarRecycler
                     imageUri = Uri.parse(imgPath)?: Uri.EMPTY
                     carRecyclerViewAdapter.updateCarImage(position,imageUri)
                     lifecycleScope.launch {
-                        viewModel?.updateCarImage(carId,imageUri.toString())
+                        carViewModel.updateCarImage(carId,imageUri.toString())
                     }
                 }
                 1 -> if (resultCode == Activity.RESULT_OK && data != null) {
                     imageUri = data.data?: Uri.EMPTY
                     carRecyclerViewAdapter.updateCarImage(position,imageUri)
                     lifecycleScope.launch {
-                        viewModel?.updateCarImage(carId,imageUri.toString())
+                        carViewModel.updateCarImage(carId,imageUri.toString())
                     }
                 }
             }
@@ -341,7 +321,7 @@ class CarFragment : BaseFragment<FragmentCarBinding, CarViewModel>(),CarRecycler
     }
 
 
-    override fun initViewModel(): CarViewModel? = viewModel
+    override fun initViewModel(): CarViewModel = carViewModel
 
 
     override fun getViewBinding(): FragmentCarBinding =
@@ -350,22 +330,19 @@ class CarFragment : BaseFragment<FragmentCarBinding, CarViewModel>(),CarRecycler
 
     override fun onClickAddCarImage(position: Int) {
         this.position = position
-        carId = carsList[position].carId
+        carId = carsList[position].id
         requestStoragePermission()
     }
 
     override fun onClickDeleteCar(position: Int) {
-        val carId = carsList[position].carId
+        val carId = carsList[position].id
         lifecycleScope.launch {
-            carsList.removeAt(position)
-            viewModel?.removeCar(carId)
-            viewModel?.getAddedCars(UserLoginPreferences(requireContext()).userId.first()?:0)
+            carsList.remove(carsList.find { it.id==carId })
+            carViewModel.removeCar(carId)
         }
     }
 
     companion object{
-        private const val pictureModeCamera = "camera"
-        private const val pictureModeGallery = "gallery"
         private const val CAMERA_PERMISSION_REQ_CODE = 124
         private const val STORAGE_PERMISSION_REQ_CODE = 123
     }

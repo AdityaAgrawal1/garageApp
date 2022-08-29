@@ -1,10 +1,9 @@
 package com.example.garageapp.auth.data
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.lifecycle.LiveData
 import com.example.garageapp.base.BaseRepository
 import com.example.garageapp.main.db.GarageDatabase
-import com.example.garageapp.main.db.User
+import com.example.garageapp.main.db.entities.User
 import com.example.garageapp.utils.DateTimeHelper.Companion.getCurrentDateAndTime
 import javax.inject.Inject
 
@@ -24,15 +23,15 @@ class AuthRepository @Inject constructor(
         return db.getUserDao().upsertUser(user)
     }
 
-    suspend fun loginUser(userName:String, password:String): LiveData<User> {
+    suspend fun loginUser(userName:String, password:String): User {
         return db.getUserDao().loginUser(userName,password)
     }
 
-    suspend fun getUserData(userId:Long):LiveData<User> {
+    suspend fun getUserData(userId:Long): User {
         return db.getUserDao().getUserDataDetails(userId)
     }
 
-    suspend fun checkIfUserExists(username:String):LiveData<User> {
+    suspend fun checkIfUserExists(username:String): User {
         return db.getUserDao().getUserByName(username)
     }
 

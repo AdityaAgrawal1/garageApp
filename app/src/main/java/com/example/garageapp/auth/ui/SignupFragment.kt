@@ -12,7 +12,7 @@ import com.example.garageapp.R
 import com.example.garageapp.auth.data.AuthViewModel
 import com.example.garageapp.base.BaseFragment
 import com.example.garageapp.databinding.FragmentSignupBinding
-import com.example.garageapp.main.db.DbResource
+import com.example.garageapp.main.db.resources.DbResource
 import com.example.garageapp.utils.UserLoginPreferences
 import com.example.garageapp.utils.printDebug
 import com.example.garageapp.utils.snackBar

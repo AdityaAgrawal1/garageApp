@@ -7,6 +7,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import com.example.garageapp.R
+import com.example.garageapp.main.data.MainViewModel
 import com.example.garageapp.utils.UserLoginPreferences
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
