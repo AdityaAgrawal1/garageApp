@@ -10,9 +10,9 @@ An Android app that demonstrates modern Android development with Hilt, Coroutine
 <br>
 <p>App Screens</p>
 <p align="center">
-    <img src="assets/dashboard.jpg" height="400">
-    <img src="assets/login.jpg" height="400">
-    <img src="assets/signup.jpg" height="400">
+    <img src="dashboard.jpg" height="400">
+    <img src="login.jpg" height="400">
+    <img src="signup.jpg" height="400">
 </p>
 <br>
 
@@ -34,11 +34,11 @@ App built with Kotlin and Android Jetpack Components.
 <br>
 
 ## Architecture
-- MVVM Architecture (View - DataBinding - ViewModel - Model)
+- MVVM Architecture (Model - View - ViewModel)
 - Repository Pattern
 - It follows the Google's official architecture guidance.
-- The overall architecture of the app is composed of two layers; the UI layer and the data layer. Each layer has dedicated components and they have each different responsibilities.
-- Each layer follows unidirectional event/data flow; the UI layer emits user events to the data layer.
+- The overall architecture of the app is composed of three layers; the UI layer, the data layer and the viewModel. Each layer has dedicated components and they have each different responsibilities.
+- Each layer follows unidirectional event/data flow; the UI layer emits user events to the data layer and the data in the viewModel is observed by the UI Layer.
 - The data layer is designed to work independently from other layers and must be pure, which means it doesn't have any dependencies on the other layers.
 - With this loosely coupled architecture, you can increase the reusability of components and scalability of your app.
 
