@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import com.example.garageapp.App
 import com.example.garageapp.BuildConfig
 import com.example.garageapp.R
-import com.example.garageapp.main.Responses.ErrorResponse
+import com.example.garageapp.main.data.Responses.ErrorResponse
 import com.example.garageapp.networks.Resource
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.JsonSyntaxException

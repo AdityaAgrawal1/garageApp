@@ -1,7 +1,6 @@
 package com.example.garageapp.networks
-import com.example.garageapp.cars.responses.CarMakeResponse
-import com.example.garageapp.cars.responses.CarModelResponse
-import okhttp3.ResponseBody
+import com.example.garageapp.cars.data.responses.CarMakeResponse
+import com.example.garageapp.cars.data.responses.CarModelResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
 

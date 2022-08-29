@@ -1,4 +1,4 @@
-package com.example.garageapp.main.Responses
+package com.example.garageapp.main.data.Responses
 
 import com.google.gson.annotations.SerializedName
 

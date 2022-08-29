@@ -3,8 +3,8 @@ package com.example.garageapp.cars.data
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.example.garageapp.base.BaseRepository
-import com.example.garageapp.cars.responses.CarMakeResponse
-import com.example.garageapp.cars.responses.CarModelResponse
+import com.example.garageapp.cars.data.responses.CarMakeResponse
+import com.example.garageapp.cars.data.responses.CarModelResponse
 import com.example.garageapp.main.db.entities.Car
 import com.example.garageapp.main.db.GarageDatabase
 import com.example.garageapp.networks.ApiService

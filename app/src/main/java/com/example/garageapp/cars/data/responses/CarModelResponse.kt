@@ -1,27 +1,33 @@
-package com.example.garageapp.cars.responses
+package com.example.garageapp.cars.data.responses
 
 import com.google.gson.annotations.SerializedName
 
-data class CarMakeResponse(
+data class CarModelResponse(
 
 	@field:SerializedName("Message")
 	val message: String? = null,
 
 	@field:SerializedName("Results")
-	val results: List<MakeItem?>? = null,
+	val results: List<ModelItem?>? = null,
 
 	@field:SerializedName("Count")
 	val count: Int? = null,
 
 	@field:SerializedName("SearchCriteria")
-	val searchCriteria: Any? = null
+	val searchCriteria: String? = null
 )
 
-data class MakeItem(
+data class ModelItem(
 
 	@field:SerializedName("Make_ID")
 	val makeID: Int? = null,
 
+	@field:SerializedName("Model_ID")
+	val modelID: Int? = null,
+
 	@field:SerializedName("Make_Name")
-	val makeName: String? = null
+	val makeName: String? = null,
+
+	@field:SerializedName("Model_Name")
+	val modelName: String? = null
 )

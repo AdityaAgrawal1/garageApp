@@ -6,8 +6,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.garageapp.base.BaseViewModel
-import com.example.garageapp.cars.responses.CarMakeResponse
-import com.example.garageapp.cars.responses.CarModelResponse
+import com.example.garageapp.cars.data.responses.CarMakeResponse
+import com.example.garageapp.cars.data.responses.CarModelResponse
 import com.example.garageapp.main.db.entities.Car
 import com.example.garageapp.main.db.resources.DbResource
 import com.example.garageapp.networks.Resource
