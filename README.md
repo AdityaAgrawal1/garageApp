@@ -10,9 +10,9 @@ An Android app that demonstrates modern Android development with Hilt, Coroutine
 <br>
 <p>App Screens</p>
 <p align="center">
-    <img src="src/main/assets/dashboard.jpg" height="400">
-    <img src="src/main/assets/login.jpg" height="400">
-    <img src="src/main/assets/signup.jpg" height="400">
+    <img src="assets/dashboard.jpg" height="400">
+    <img src="assets/login.jpg" height="400">
+    <img src="assets/signup.jpg" height="400">
 </p>
 <br>
 
